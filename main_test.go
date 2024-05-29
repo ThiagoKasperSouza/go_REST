@@ -4,7 +4,7 @@ package main
 import (
 	"testing"
 
-	r "newsRestFiber/repository"
+	r "newsRestFiber/src/repository"
 	r_scen "newsRestFiber/test/scenarios/repository_scenario"
 
 	"github.com/cucumber/godog"

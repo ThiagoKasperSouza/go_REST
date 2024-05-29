@@ -3,7 +3,7 @@ package steps
 import (
 	"context"
 	"encoding/json"
-	r "newsRestFiber/repository"
+	r "newsRestFiber/src/repository"
 
 	"github.com/google/uuid"
 )
@@ -39,12 +39,12 @@ func CreateObj() error {
 }
 
 func GetObj() error {
-	_, err := rdb.GetItemById("example", ex.Id)
+	_, err := rdb.GetItemById("example", ex.Id).Result()
 	return err
 }
 
 func GetAll() error {
-	_, err := rdb.GetAll("example")
+	_, err := rdb.GetAll("example").Result()
 	return err
 }
 
