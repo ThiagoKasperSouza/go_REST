@@ -33,22 +33,22 @@ func (rdb *DbClient) Create(key string, Id string, data []byte) *redis.IntCmd {
 }
 
 func (rdb *DbClient) GetAll(key string) (map[string]string, error) {
-	log.Default().Printf("list %s", key)
+	log.Default().Printf("list %s\n", key)
 	return rdb.Instance.HGetAll(context.Background(), key).Result()
 }
 
 func (rdb *DbClient) GetItemById(key string, Id string) (string, error) {
-	log.Default().Printf("gibi %s by id %s", key, Id)
+	log.Default().Printf("gibi %s by id %s\n", key, Id)
 	res := rdb.Instance.HGet(context.Background(), key, Id)
 	return res.Result()
 }
 
 func (rdb *DbClient) Update(key string, Id string, data []byte) *redis.IntCmd {
-	log.Default().Printf("u %s by id %s", key, Id)
+	log.Default().Printf("u %s by id %s\n", key, Id)
 	return rdb.Instance.HSet(context.Background(), key, Id, data)
 }
 
 func (rdb *DbClient) Delete(key string, Id string) *redis.IntCmd {
-	log.Default().Printf("d %s by id %s", key, Id)
+	log.Default().Printf("d %s by id %s\n", key, Id)
 	return rdb.Instance.HDel(context.Background(), key, Id)
 }
