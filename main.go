@@ -1,26 +1,16 @@
 package main
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
+	r "newsRestFiber/repository"
+
 	"github.com/google/uuid"
-	"github.com/joho/godotenv"
-	"github.com/redis/go-redis/v9"
 )
 
-var rdb = redis.NewClient(&redis.Options{
-	Addr:     "redis-14918.c8.us-east-1-3.ec2.redns.redis-cloud.com:14918",
-	Username: "default",
-
-	Password: "zCAtUdbQ12&", // no password set
-	DB:       0,             // use default DB
-})
-
 func main() {
-	err := godotenv.Load(".env")
-	if err != nil {
-		panic(err)
+	rdb := r.DbClient{
+		Instance: r.GetClient(),
 	}
 	type donation struct {
 		Id   string `json:"id"`
@@ -43,14 +33,16 @@ func main() {
 	for _, d := range ds {
 		res, _ := json.Marshal(d)
 
-		rdb.HSet(context.Background(), "donations", d.Id, res)
+		rdb.Create("donations", d.Id, res)
 	}
 
 	donations := []*donation{}
-	val, err := rdb.HGetAll(context.Background(), "donations").Result()
+	var lastId string
+	val, _ := rdb.GetAll("donations")
 	for _, item := range val {
 		donation := &donation{}
 		err := json.Unmarshal([]byte(item), donation)
+		lastId = donation.Id
 		fmt.Println(donation.Nome)
 		if err != nil {
 			panic(err)
@@ -58,5 +50,19 @@ func main() {
 		donations = append(donations, donation)
 
 	}
+	res, _ := rdb.GetItemById("donations", lastId)
+	fmt.Print(res)
+
+	updateD := donation{
+		Id:   lastId,
+		Nome: "NomeUpdated",
+		Link: "LinkUpdated",
+	}
+	jsonUp, _ := json.Marshal(updateD)
+	var upRes = rdb.Update("donations", lastId, jsonUp)
+	fmt.Print(upRes)
+
+	var delRes = rdb.Delete("donations", lastId)
+	fmt.Print(delRes)
 
 }
