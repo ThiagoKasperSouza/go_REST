@@ -4,15 +4,14 @@ package main
 import (
 	"testing"
 
-	r_steps "newsRestFiber/test/steps"
+	r "newsRestFiber/repository"
+	r_scen "newsRestFiber/test/scenarios/repository_scenario"
 
 	"github.com/cucumber/godog"
-	"github.com/redis/go-redis/v9"
 )
 
-// godogsCtxKey is the key used to store the available godogs in the context.Context.
-type defaultCtx struct {
-	Client *redis.Client
+var rdb = r.DbClient{
+	Instance: r.GetClient(),
 }
 
 func TestFeatures(t *testing.T) {
@@ -20,7 +19,7 @@ func TestFeatures(t *testing.T) {
 		ScenarioInitializer: InitializeScenario,
 		Options: &godog.Options{
 			Format:   "pretty",
-			Paths:    []string{"features"},
+			Paths:    []string{"./test/features"},
 			TestingT: t, // Testing instance that will run subtests.
 		},
 	}
@@ -31,6 +30,5 @@ func TestFeatures(t *testing.T) {
 }
 
 func InitializeScenario(ctx *godog.ScenarioContext) {
-
-	ctx.Step(`[Repo] I create an example Obj ->`, r_steps.CreateObj)
+	r_scen.InitializeScenario(ctx)
 }
