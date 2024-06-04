@@ -1,13 +1,4 @@
-package main
-
-import (
-	"testing"
-
-	r "newsRestFiber/src/repository"
-	r_scen "newsRestFiber/test/scenarios/repository_scenario"
-
-	"github.com/cucumber/godog"
-)
+package handlers
 
 /*
 Copyright 2024 Thiago Kasper de Souza
@@ -27,26 +18,3 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with rsNews_blogApi.  If not, see <https://www.gnu.org/licenses/>
 */
-
-var rdb = r.DbClient{
-	Instance: r.GetClient(),
-}
-
-func TestFeatures(t *testing.T) {
-	suite := godog.TestSuite{
-		ScenarioInitializer: InitializeScenario,
-		Options: &godog.Options{
-			Format:   "pretty",
-			Paths:    []string{"./test/features"},
-			TestingT: t, // Testing instance that will run subtests.
-		},
-	}
-
-	if suite.Run() != 0 {
-		t.Fatal("non-zero status returned, failed to run feature tests")
-	}
-}
-
-func InitializeScenario(ctx *godog.ScenarioContext) {
-	r_scen.InitializeScenario(ctx)
-}
