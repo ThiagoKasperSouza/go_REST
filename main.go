@@ -4,8 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	r "newsRestFiber/src/repository"
-	m "newsRestFiber/src/repository/models"
+	middlewares "newsRestFiber/src/middlewares"
+	repository "newsRestFiber/src/repository"
+	models "newsRestFiber/src/repository/models"
 
 	"github.com/google/uuid"
 )
@@ -35,32 +36,36 @@ const (
 )
 
 func main() {
-	rdb := r.DbClient{
-		Instance: r.GetClient(),
+	rdb := repository.DbClient{
+		Instance: repository.GetClient(),
 	}
 
 	router := http.NewServeMux()
-	router.HandleFunc(POST+"/", func(w http.ResponseWriter, r *http.Request) {
-		r.Header.Set("Content-Type", "application/json")
 
-		fmt.Println(r.Body)
-		d := m.Donation{
-			Id:   uuid.New().String(),
-			Nome: "teste",
-			Link: "link1",
-		}
-		res, err := json.Marshal(d)
+	stack := middlewares.CreateStack(
+		middlewares.Headers,
+		middlewares.Logging,
+	)
+
+	router.HandleFunc(POST+"/donations/create", func(w http.ResponseWriter, r *http.Request) {
+
+		decoder := json.NewDecoder(r.Body)
+		var t models.Donation
+		t.Id = uuid.New().String()
+		decoder.Decode(&t)
+
+		res, err := json.Marshal(t)
 		if err != nil {
 			panic(err)
 		}
-		d.Create(rdb, "donations", d.Id, res)
+		t.Create(rdb, "donations", t.Id, res)
 
-		json.NewEncoder(w).Encode(d)
+		json.NewEncoder(w).Encode(t)
 	})
 
 	server := http.Server{
 		Addr:    ":8080",
-		Handler: router,
+		Handler: stack(router),
 	}
 
 	fmt.Println("Server listening on http://localhost:8080")
