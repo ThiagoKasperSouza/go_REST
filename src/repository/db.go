@@ -46,6 +46,10 @@ type DbClient struct {
 	Instance *redis.Client
 }
 
+var Rdb = DbClient{
+	Instance: GetClient(),
+}
+
 func (rdb *DbClient) Create(key string, Id string, data []byte) *redis.IntCmd {
 	log.Default().Printf("C - %s  %s\n", Id, data)
 	return rdb.Instance.HSet(context.Background(), key, Id, data)

@@ -1,14 +1,10 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	middlewares "newsRestFiber/src/middlewares"
-	repository "newsRestFiber/src/repository"
-	models "newsRestFiber/src/repository/models"
-
-	"github.com/google/uuid"
+	routes "newsRestFiber/src/routes"
 )
 
 /*
@@ -30,38 +26,16 @@ You should have received a copy of the GNU General Public License
 along with rsNews_blogApi.  If not, see <https://www.gnu.org/licenses/>
 */
 
-const (
-	GET  = "GET "
-	POST = "POST "
-)
-
 func main() {
-	rdb := repository.DbClient{
-		Instance: repository.GetClient(),
-	}
 
 	router := http.NewServeMux()
+
+	routes.RegisterDonationRoutes("/donations", router)
 
 	stack := middlewares.CreateStack(
 		middlewares.Headers,
 		middlewares.Logging,
 	)
-
-	router.HandleFunc(POST+"/donations/create", func(w http.ResponseWriter, r *http.Request) {
-
-		decoder := json.NewDecoder(r.Body)
-		var t models.Donation
-		t.Id = uuid.New().String()
-		decoder.Decode(&t)
-
-		res, err := json.Marshal(t)
-		if err != nil {
-			panic(err)
-		}
-		t.Create(rdb, "donations", t.Id, res)
-
-		json.NewEncoder(w).Encode(t)
-	})
 
 	server := http.Server{
 		Addr:    ":8080",
@@ -70,16 +44,5 @@ func main() {
 
 	fmt.Println("Server listening on http://localhost:8080")
 	server.ListenAndServe()
-
-	// d := m.Donation{
-	// 	Id:   uuid.New().String(),
-	// 	Nome: "TESTE",
-	// 	Link: "link1",
-	// }
-	// res, err := json.Marshal(d)
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// d.Create(rdb, "donations", d.Id, res)
 
 }
