@@ -12,7 +12,7 @@ func (m *CrudModel) GetItemById(client r.DbClient, key string, id string) (strin
 	return client.GetItemById(key, id).Result()
 }
 
-func (m *CrudModel) GetAll(client r.DbClient, key string, id string) (map[string]string, error) {
+func (m *CrudModel) GetAll(client r.DbClient, key string) (map[string]string, error) {
 	return client.GetAll(key).Result()
 }
 
