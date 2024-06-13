@@ -7,6 +7,7 @@ import (
 	"newsRestFiber/src/conf"
 	"newsRestFiber/src/repository"
 	"newsRestFiber/src/repository/models"
+	"regexp"
 
 	"github.com/google/uuid"
 )
@@ -34,6 +35,14 @@ func (router *DonationRouter) Create(w http.ResponseWriter, r *http.Request) {
 			status: http.StatusBadRequest,
 		})
 	}
+	match, regex_err := regexp.Match("^(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/|\\/|\\/\\/)?[A-z0-9_-]*?[:]?[A-z0-9_-]*?[@]?[A-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?$", []byte(t.Link))
+	if regex_err != nil || match == false {
+		json.NewEncoder(w).Encode(&ErrorResponse{
+			err:    errors.New("Invalid Link error"),
+			status: http.StatusBadRequest,
+		})
+	}
+
 	t.Create(repository.Rdb, collection_name, t.Id, res)
 
 	json.NewEncoder(w).Encode(t)
@@ -75,6 +84,13 @@ func (router *DonationRouter) Update(w http.ResponseWriter, r *http.Request) {
 			status: http.StatusBadRequest,
 		})
 	}
+	match, regex_err := regexp.Match("^(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/|\\/|\\/\\/)?[A-z0-9_-]*?[:]?[A-z0-9_-]*?[@]?[A-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?$", []byte(t.Link))
+	if regex_err != nil || match == false {
+		json.NewEncoder(w).Encode(&ErrorResponse{
+			err:    errors.New("Invalid Link error"),
+			status: http.StatusBadRequest,
+		})
+	}
 
 	res, err := t.Update(repository.Rdb, collection_name, r.PathValue("id"), jsonD)
 	if err != nil {
@@ -88,7 +104,7 @@ func (router *DonationRouter) Update(w http.ResponseWriter, r *http.Request) {
 
 func (router *DonationRouter) Delete(w http.ResponseWriter, r *http.Request) {
 	var t models.Donation
-	res, err := t.GetItemById(repository.Rdb, collection_name, r.PathValue("id"))
+	res, err := t.Delete(repository.Rdb, collection_name, r.PathValue("id"))
 	if err != nil {
 		json.NewEncoder(w).Encode(&ErrorResponse{
 			err:    err,
