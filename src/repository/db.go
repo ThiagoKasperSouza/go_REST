@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"github.com/segmentio/ksuid"
 	"log"
 	"os"
 
@@ -50,7 +51,7 @@ var Rdb = DbClient{
 	Instance: GetClient(),
 }
 
-func (rdb *DbClient) Create(key string, Id string, data []byte) *redis.IntCmd {
+func (rdb *DbClient) Create(key string, Id ksuid.KSUID, data []byte) *redis.IntCmd {
 	log.Default().Printf("C - %s  %s\n", Id, data)
 	return rdb.Instance.HSet(context.Background(), key, Id, data)
 }
@@ -60,17 +61,17 @@ func (rdb *DbClient) GetAll(key string) *redis.MapStringStringCmd {
 	return rdb.Instance.HGetAll(context.Background(), key)
 }
 
-func (rdb *DbClient) GetItemById(key string, Id string) *redis.StringCmd {
+func (rdb *DbClient) GetItemById(key string, Id ksuid.KSUID) *redis.StringCmd {
 	log.Default().Printf("L - %s by id %s\n", key, Id)
-	return rdb.Instance.HGet(context.Background(), key, Id)
+	return rdb.Instance.HGet(context.Background(), key, Id.String())
 }
 
-func (rdb *DbClient) Update(key string, Id string, data []byte) *redis.IntCmd {
+func (rdb *DbClient) Update(key string, Id ksuid.KSUID, data []byte) *redis.IntCmd {
 	log.Default().Printf("U - %s by id %s\n", key, Id)
 	return rdb.Instance.HSet(context.Background(), key, Id, data)
 }
 
-func (rdb *DbClient) Delete(key string, Id string) *redis.IntCmd {
+func (rdb *DbClient) Delete(key string, Id ksuid.KSUID) *redis.IntCmd {
 	log.Default().Printf("D - %s by id %s\n", key, Id)
-	return rdb.Instance.HDel(context.Background(), key, Id)
+	return rdb.Instance.HDel(context.Background(), key, Id.String())
 }
