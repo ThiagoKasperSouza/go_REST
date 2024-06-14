@@ -1,7 +1,7 @@
 package repositoryscenario
 
 import (
-	r_steps "newsRestFiber/test/scenarios/repository_scenario/steps"
+	r_steps "go_Rest/test/scenarios/repository_scenario/steps"
 
 	"github.com/cucumber/godog"
 )

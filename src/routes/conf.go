@@ -1,5 +1,14 @@
 package routes
 
+import (
+	"encoding/json"
+	"errors"
+	"go_Rest/src/repository/models"
+	"log"
+	"net/http"
+	"regexp"
+)
+
 /*
 Copyright 2024 Thiago Kasper de Souza
 
@@ -27,3 +36,33 @@ const (
 	DELETE  = "DELETE "
 	OPTIONS = "OPTIONS "
 )
+
+type Router struct {
+	mux             *http.ServeMux
+	collection_name string
+}
+
+type ErrorResponse struct {
+	err    error
+	status int
+}
+
+func ValidateLinkRegex(w http.ResponseWriter, t models.Info) {
+	match, regex_err := regexp.Match("^(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/|\\/|\\/\\/)?[A-z0-9_-]*?[:]?[A-z0-9_-]*?[@]?[A-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?$", []byte(t.Link))
+	if regex_err != nil || match == false {
+		json.NewEncoder(w).Encode(&ErrorResponse{
+			err:    errors.New("Invalid Link error"),
+			status: http.StatusBadRequest,
+		})
+	}
+}
+
+func HandleError(err error, w http.ResponseWriter, message string) {
+	if err != nil {
+		log.Default().Println(message + " - " + err.Error())
+		_ = json.NewEncoder(w).Encode(&ErrorResponse{
+			err:    errors.New("Could not finish request"),
+			status: http.StatusBadRequest,
+		})
+	}
+}

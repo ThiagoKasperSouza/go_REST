@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
+	middlewares "go_Rest/src/middlewares"
+	routes "go_Rest/src/routes"
 	"net/http"
-	middlewares "newsRestFiber/src/middlewares"
-	routes "newsRestFiber/src/routes"
 )
 
 /*
@@ -30,7 +30,12 @@ func main() {
 
 	router := http.NewServeMux()
 
-	routes.RegisterDonationRoutes("/donations", router)
+	routes.RegisterRoutes("/donations", router)
+	routes.RegisterRoutes("/isps_info", router)
+	routes.RegisterRoutes("/water_level", router)
+	routes.RegisterRoutes("/shelters", router)
+	routes.RegisterRoutes("/blocked_roads", router)
+	routes.RegisterRoutes("/news", router)
 
 	stack := middlewares.CreateStack(
 		middlewares.Headers,

@@ -3,8 +3,8 @@ package main
 import (
 	"testing"
 
-	r "newsRestFiber/src/repository"
-	r_scen "newsRestFiber/test/scenarios/repository_scenario"
+	r "go_Rest/src/repository"
+	r_scen "go_Rest/test/scenarios/repository_scenario"
 
 	"github.com/cucumber/godog"
 )

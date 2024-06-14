@@ -1,4 +1,4 @@
-module newsRestFiber
+module go_Rest
 
 go 1.22
 

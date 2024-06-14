@@ -1,8 +1,9 @@
 package models
 
 import (
+	r "go_Rest/src/repository"
+
 	"github.com/segmentio/ksuid"
-	r "newsRestFiber/src/repository"
 )
 
 type CrudModel struct{}

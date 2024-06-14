@@ -21,7 +21,7 @@ You should have received a copy of the GNU General Public License
 along with go_rest.  If not, see <https://www.gnu.org/licenses/>
 */
 
-type Donation struct {
+type Info struct {
 	CrudModel
 	Id   ksuid.KSUID `json:"id"`
 	Nome string      `json:"nome"`
