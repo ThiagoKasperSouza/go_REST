@@ -1,4 +1,4 @@
-package conf
+package routes
 
 /*
 Copyright 2024 Thiago Kasper de Souza
