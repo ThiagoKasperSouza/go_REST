@@ -5,6 +5,8 @@ import (
 	middlewares "go_Rest/src/middlewares"
 	routes "go_Rest/src/routes"
 	"net/http"
+
+	secure "github.com/srikrsna/security-headers"
 )
 
 /*
@@ -30,6 +32,13 @@ func main() {
 
 	router := http.NewServeMux()
 
+	s := &secure.Secure{
+		ContentTypeNoSniff: true,
+	}
+	csp := &secure.CSP{
+		Value:    `object-src 'none'; script-src {{nonce}} 'strict-dynamic'; base-uri 'self';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests`,
+		ByteSize: 8,
+	}
 	routes.RegisterRoutes("/donations", router)
 	routes.RegisterRoutes("/isps_info", router)
 	routes.RegisterRoutes("/water_level", router)
@@ -40,6 +49,8 @@ func main() {
 	stack := middlewares.CreateStack(
 		middlewares.Headers,
 		middlewares.Logging,
+		csp.Middleware(),
+		s.Middleware(),
 	)
 
 	server := http.Server{

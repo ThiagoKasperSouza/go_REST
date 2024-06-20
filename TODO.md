@@ -5,4 +5,5 @@ models:
     ruas fechadas/em manutenção
     noticias
     
-    
+
+implementar secure com tls
